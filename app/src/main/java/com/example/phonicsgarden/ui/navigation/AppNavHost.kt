@@ -21,6 +21,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.phonicsgarden.ui.parentgate.ParentGateDialog
 import com.example.phonicsgarden.ui.games.bubble.BubblePopScreen
 import com.example.phonicsgarden.ui.games.monster.FeedMonsterScreen
 import com.example.phonicsgarden.ui.games.tracing.TracingScreen
@@ -42,6 +46,9 @@ fun AppNavHost() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val destination = backStackEntry?.destination
 
+    var isParentUnlocked by remember { mutableStateOf(false) }
+    var pendingRoute by remember { mutableStateOf<Any?>(null) }
+
     val items = listOf(
         TopLevelItem("Garden", Landing, Icons.Default.Home, destination?.hasRoute<Landing>() == true),
         TopLevelItem("Progress", Stats, Icons.Default.Star, destination?.hasRoute<Stats>() == true),
@@ -49,6 +56,29 @@ fun AppNavHost() {
     )
     // Bottom bar only on top-level screens; games use the full screen.
     val showBottomBar = items.any { it.selected }
+
+    fun navigateToRoute(route: Any) {
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    pendingRoute?.let { targetRoute ->
+        ParentGateDialog(
+            onSuccess = {
+                pendingRoute = null
+                isParentUnlocked = true
+                navigateToRoute(targetRoute)
+            },
+            onDismiss = {
+                pendingRoute = null
+            }
+        )
+    }
 
     Scaffold(
         bottomBar = {
@@ -58,12 +88,11 @@ fun AppNavHost() {
                         NavigationBarItem(
                             selected = item.selected,
                             onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
+                                val isProtected = item.route is Stats || item.route is Settings
+                                if (isProtected && !isParentUnlocked) {
+                                    pendingRoute = item.route
+                                } else {
+                                    navigateToRoute(item.route)
                                 }
                             },
                             icon = { Icon(item.icon, contentDescription = null) },
@@ -121,8 +150,18 @@ fun AppNavHost() {
                     onDone = { navController.popBackStack<Landing>(inclusive = false) }
                 )
             }
-            composable<Stats> { StatsScreen() }
-            composable<Settings> { SettingsScreen() }
+            composable<Stats> {
+                StatsScreen(onLock = {
+                    isParentUnlocked = false
+                    navController.popBackStack<Landing>(inclusive = false)
+                })
+            }
+            composable<Settings> {
+                SettingsScreen(onLock = {
+                    isParentUnlocked = false
+                    navController.popBackStack<Landing>(inclusive = false)
+                })
+            }
         }
     }
 }

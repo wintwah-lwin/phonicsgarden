@@ -3,11 +3,17 @@ package com.example.phonicsgarden.ui.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,13 +30,27 @@ private val phaseDescriptions = mapOf(
     3 to "Phase 3: adds e u r h b f"
 )
 
-// TODO: put this screen behind a simple parent gate (it is aimed at adults).
+/** Adult/Parent preferences screen protected by Parent Gate. */
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(
+    onLock: () -> Unit = {},
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text("Settings", style = MaterialTheme.typography.headlineMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Settings 🔒", style = MaterialTheme.typography.headlineMedium)
+            OutlinedButton(onClick = onLock) {
+                Icon(Icons.Default.Lock, contentDescription = null)
+                Spacer(Modifier.width(4.dp))
+                Text("Lock Gate")
+            }
+        }
 
         Text("Letters and sounds", style = MaterialTheme.typography.titleMedium)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

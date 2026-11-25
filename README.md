@@ -10,13 +10,13 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 - **Bubble Pop**: hear a sound (text-to-speech, en-AU) and pop the matching letter
 - **Feed the Monster**: hear a sound, then drag (or tap) the picture that starts with it onto the monster
 - **Tracing Garden**: trace lowercase letters in the correct stroke order; a flower blooms when done
-- **Progress screen**: per-sound mastery and overall accuracy
-- **Settings**: phonics phase, sound on/off, reduce motion (saved with DataStore)
+- **Progress screen**: per-sound mastery and overall accuracy (protected by Parent Gate)
+- **Settings**: phonics phase, sound on/off, reduce motion (saved with DataStore, protected by Parent Gate)
+- **Parent Gate**: adult verification math challenge to protect adult settings and statistics
 - Spaced-repetition (Leitner boxes) decides which sounds appear more often
 - Offline-first: bundled starter data, optional word refresh from the Datamuse API
 
 ## Planned
-- Parent gate for Progress and Settings
 - Recorded phoneme audio
 
 ## Architecture
