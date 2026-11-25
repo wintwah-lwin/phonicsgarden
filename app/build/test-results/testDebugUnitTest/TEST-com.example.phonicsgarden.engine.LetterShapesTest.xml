@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.phonicsgarden.engine.LetterShapesTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-25T07:25:48" hostname="LAPTOP-Q48GVMCK" time="0.04">
+  <properties/>
+  <testcase name="t requires the stem before the crossbar" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.015"/>
+  <testcase name="i dot is a single point and the stem comes first" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.001"/>
+  <testcase name="every taught letter has a tracing guide" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.001"/>
+  <testcase name="unknown letters return no shape" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.002"/>
+  <testcase name="scribbling far from the letter is rejected for every letter" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.001"/>
+  <testcase name="tracing along the guide in order is accepted for every letter" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.008"/>
+  <testcase name="every stroke has at least one point" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.0"/>
+  <testcase name="multi stroke letters report the right number of strokes" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.001"/>
+  <testcase name="all waypoints sit inside the unit square" classname="com.example.phonicsgarden.engine.LetterShapesTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

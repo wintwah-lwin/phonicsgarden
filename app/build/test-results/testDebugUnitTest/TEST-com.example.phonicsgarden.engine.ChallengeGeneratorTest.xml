@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.phonicsgarden.engine.ChallengeGeneratorTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-25T07:25:48" hostname="LAPTOP-Q48GVMCK" time="0.017">
+  <properties/>
+  <testcase name="options have requested size and no duplicates" classname="com.example.phonicsgarden.engine.ChallengeGeneratorTest" time="0.011"/>
+  <testcase name="small pool gives fewer options instead of crashing" classname="com.example.phonicsgarden.engine.ChallengeGeneratorTest" time="0.001"/>
+  <testcase name="same seed gives the same challenge" classname="com.example.phonicsgarden.engine.ChallengeGeneratorTest" time="0.0"/>
+  <testcase name="options always contain the correct answer" classname="com.example.phonicsgarden.engine.ChallengeGeneratorTest" time="0.002"/>
+  <testcase name="prompt is the spoken sound and answers are checked correctly" classname="com.example.phonicsgarden.engine.ChallengeGeneratorTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

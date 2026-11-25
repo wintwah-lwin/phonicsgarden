@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.phonicsgarden.data.SeedDataTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-25T07:25:48" hostname="LAPTOP-Q48GVMCK" time="0.054">
+  <properties/>
+  <testcase name="every bundled word has a picture" classname="com.example.phonicsgarden.data.SeedDataTest" time="0.048"/>
+  <testcase name="every taught letter has at least one word to play with" classname="com.example.phonicsgarden.data.SeedDataTest" time="0.0"/>
+  <testcase name="grapheme ids are unique" classname="com.example.phonicsgarden.data.SeedDataTest" time="0.002"/>
+  <testcase name="every word starts with a taught letter and carries that letter's phase" classname="com.example.phonicsgarden.data.SeedDataTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
