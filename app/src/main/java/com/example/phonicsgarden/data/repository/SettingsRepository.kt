@@ -19,18 +19,25 @@ data class AppSettings(
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
 
+interface SettingsRepository {
+    val settings: Flow<AppSettings>
+    suspend fun setPhase(phase: Int)
+    suspend fun setSoundEnabled(enabled: Boolean)
+    suspend fun setReducedMotion(enabled: Boolean)
+}
+
 /** Stores parent/teacher preferences on the device using Preferences DataStore. */
 @Singleton
-class SettingsRepository @Inject constructor(
+class SettingsRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) {
+) : SettingsRepository {
     private object Keys {
         val PHASE = intPreferencesKey("phase")
         val SOUND = booleanPreferencesKey("sound_enabled")
         val REDUCED_MOTION = booleanPreferencesKey("reduced_motion")
     }
 
-    val settings: Flow<AppSettings> = context.dataStore.data.map { prefs ->
+    override val settings: Flow<AppSettings> = context.dataStore.data.map { prefs ->
         AppSettings(
             phase = prefs[Keys.PHASE] ?: 1,
             soundEnabled = prefs[Keys.SOUND] ?: true,
@@ -38,15 +45,15 @@ class SettingsRepository @Inject constructor(
         )
     }
 
-    suspend fun setPhase(phase: Int) {
+    override suspend fun setPhase(phase: Int) {
         context.dataStore.edit { it[Keys.PHASE] = phase }
     }
 
-    suspend fun setSoundEnabled(enabled: Boolean) {
+    override suspend fun setSoundEnabled(enabled: Boolean) {
         context.dataStore.edit { it[Keys.SOUND] = enabled }
     }
 
-    suspend fun setReducedMotion(enabled: Boolean) {
+    override suspend fun setReducedMotion(enabled: Boolean) {
         context.dataStore.edit { it[Keys.REDUCED_MOTION] = enabled }
     }
 }

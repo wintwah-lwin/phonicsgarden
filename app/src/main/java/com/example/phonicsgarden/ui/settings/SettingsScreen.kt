@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.phonicsgarden.data.repository.AppSettings
 
 private val phaseDescriptions = mapOf(
     1 to "Phase 1: s a t p i n",
@@ -37,8 +42,39 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val downloadedWords by viewModel.downloadedWords.collectAsStateWithLifecycle()
+    val syncStatus by viewModel.syncStatus.collectAsStateWithLifecycle()
+    SettingsContent(
+        settings = settings,
+        onPhaseSelected = viewModel::setPhase,
+        onSoundChanged = viewModel::setSoundEnabled,
+        onReducedMotionChanged = viewModel::setReducedMotion,
+        onLock = onLock,
+        downloadedWords = downloadedWords,
+        syncStatus = syncStatus,
+        onCheckForWords = viewModel::checkForNewWords
+    )
+}
 
-    Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+/** Stateless settings UI (state hoisting), so it can be UI tested without a ViewModel. */
+@Composable
+fun SettingsContent(
+    settings: AppSettings,
+    onPhaseSelected: (Int) -> Unit,
+    onSoundChanged: (Boolean) -> Unit,
+    onReducedMotionChanged: (Boolean) -> Unit,
+    onLock: () -> Unit,
+    downloadedWords: Int = 0,
+    syncStatus: SyncStatus = SyncStatus.Idle,
+    onCheckForWords: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,16 +93,41 @@ fun SettingsScreen(
             phaseDescriptions.keys.forEach { phase ->
                 FilterChip(
                     selected = settings.phase == phase,
-                    onClick = { viewModel.setPhase(phase) },
+                    onClick = { onPhaseSelected(phase) },
                     label = { Text("Phase $phase") }
                 )
             }
         }
         Text(phaseDescriptions[settings.phase] ?: "", style = MaterialTheme.typography.bodyMedium)
 
-        SettingSwitch("Sound", settings.soundEnabled, viewModel::setSoundEnabled)
-        SettingSwitch("Reduce motion", settings.reducedMotion, viewModel::setReducedMotion)
+        SettingSwitch("Sound", settings.soundEnabled, onSoundChanged)
+        SettingSwitch("Reduce motion", settings.reducedMotion, onReducedMotionChanged)
+
+        WordPackCard(downloadedWords, syncStatus, onCheckForWords)
     }
+}
+
+/** Lets a grown-up download new words. Only a public word list is fetched; nothing is uploaded. */
+@Composable
+private fun WordPackCard(downloadedWords: Int, status: SyncStatus, onCheck: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Word pack", style = MaterialTheme.typography.titleMedium)
+            Text("$downloadedWords extra words downloaded")
+            Text(syncStatusMessage(status), style = MaterialTheme.typography.bodyMedium)
+            Button(onClick = onCheck, enabled = status != SyncStatus.Checking) {
+                Text("Check for new words")
+            }
+        }
+    }
+}
+
+private fun syncStatusMessage(status: SyncStatus): String = when (status) {
+    SyncStatus.Idle -> "New words are checked when the app starts."
+    SyncStatus.Checking -> "Checking for new words..."
+    is SyncStatus.Updated -> "Added ${status.added} new words!"
+    SyncStatus.UpToDate -> "You're up to date."
+    SyncStatus.Offline -> "Couldn't reach the word list. The built-in words still work."
 }
 
 @Composable

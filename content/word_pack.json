@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "words": [
+    {"text": "spoon", "emoji": "🥄"}, {"text": "star", "emoji": "⭐"}, {"text": "swan", "emoji": "🦢"},
+    {"text": "strawberry", "emoji": "🍓"},
+    {"text": "acorn", "emoji": "🌰"}, {"text": "avocado", "emoji": "🥑"}, {"text": "airplane", "emoji": "✈️"},
+    {"text": "turtle", "emoji": "🐢"}, {"text": "train", "emoji": "🚂"}, {"text": "teddy", "emoji": "🧸"},
+    {"text": "taco", "emoji": "🌮"},
+    {"text": "panda", "emoji": "🐼"}, {"text": "pear", "emoji": "🍐"}, {"text": "penguin", "emoji": "🐧"},
+    {"text": "peach", "emoji": "🍑"},
+    {"text": "ice", "emoji": "🧊"},
+    {"text": "necklace", "emoji": "📿"}, {"text": "newspaper", "emoji": "📰"}, {"text": "noodles", "emoji": "🍜"},
+    {"text": "monkey", "emoji": "🐵"}, {"text": "mango", "emoji": "🥭"}, {"text": "melon", "emoji": "🍈"},
+    {"text": "microphone", "emoji": "🎤"},
+    {"text": "dolphin", "emoji": "🐬"}, {"text": "donut", "emoji": "🍩"}, {"text": "dragon", "emoji": "🐉"},
+    {"text": "diamond", "emoji": "💎"},
+    {"text": "giraffe", "emoji": "🦒"}, {"text": "guitar", "emoji": "🎸"}, {"text": "ghost", "emoji": "👻"},
+    {"text": "globe", "emoji": "🌍"},
+    {"text": "onion", "emoji": "🧅"},
+    {"text": "carrot", "emoji": "🥕"}, {"text": "cake", "emoji": "🎂"}, {"text": "crab", "emoji": "🦀"},
+    {"text": "camel", "emoji": "🐫"}, {"text": "cherry", "emoji": "🍒"},
+    {"text": "koala", "emoji": "🐨"}, {"text": "kiwi", "emoji": "🥝"},
+    {"text": "eagle", "emoji": "🦅"}, {"text": "envelope", "emoji": "✉️"},
+    {"text": "robot", "emoji": "🤖"}, {"text": "rocket", "emoji": "🚀"}, {"text": "rose", "emoji": "🌹"},
+    {"text": "radio", "emoji": "📻"},
+    {"text": "heart", "emoji": "❤️"}, {"text": "hippo", "emoji": "🦛"}, {"text": "hammer", "emoji": "🔨"},
+    {"text": "helicopter", "emoji": "🚁"},
+    {"text": "banana", "emoji": "🍌"}, {"text": "butterfly", "emoji": "🦋"}, {"text": "bear", "emoji": "🐻"},
+    {"text": "bread", "emoji": "🍞"}, {"text": "balloon", "emoji": "🎈"},
+    {"text": "fox", "emoji": "🦊"}, {"text": "fire", "emoji": "🔥"}, {"text": "flag", "emoji": "🚩"},
+    {"text": "fork", "emoji": "🍴"}
+  ]
+}

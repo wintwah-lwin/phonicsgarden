@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Only used to fetch word lists (Datamuse). No personal data is ever sent. -->
+    <!-- Only used to download the public word pack from GitHub. No personal data is ever sent. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Lets the app discover the device text-to-speech engine (Android 11+). -->

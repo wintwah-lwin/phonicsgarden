@@ -4,11 +4,15 @@ import com.example.phonicsgarden.data.local.dao.AttemptDao
 import com.example.phonicsgarden.data.local.dao.MasteryDao
 import com.example.phonicsgarden.data.local.entity.Attempt
 import com.example.phonicsgarden.data.local.entity.Mastery
+import com.example.phonicsgarden.engine.ActivityTimeline
+import com.example.phonicsgarden.engine.DayActivity
 import com.example.phonicsgarden.engine.MasteryScheduler
 import com.example.phonicsgarden.engine.MasteryState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +24,9 @@ interface ProgressRepository {
     suspend fun masteryBoxes(): Map<Long, Int>
     suspend fun recordAttempt(graphemeId: Long, game: String, correct: Boolean)
     fun observeAttemptSummary(): Flow<AttemptSummary>
+
+    /** Answers per day for the last 7 days (oldest first), including days with no practice. */
+    fun observeLastSevenDays(): Flow<List<DayActivity>>
 }
 
 @Singleton
@@ -51,4 +58,10 @@ class ProgressRepositoryImpl @Inject constructor(
         combine(attemptDao.observeTotal(), attemptDao.observeCorrect()) { total, correct ->
             AttemptSummary(total, correct)
         }
+
+    override fun observeLastSevenDays(): Flow<List<DayActivity>> {
+        val today = LocalDate.now()
+        val since = today.minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        return attemptDao.observeDailyStats(since).map { ActivityTimeline.lastDays(it, today) }
+    }
 }

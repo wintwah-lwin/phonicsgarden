@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,6 +55,14 @@ fun AppNavHost() {
         TopLevelItem("Progress", Stats, Icons.Default.Star, destination?.hasRoute<Stats>() == true),
         TopLevelItem("Settings", Settings, Icons.Default.Settings, destination?.hasRoute<Settings>() == true)
     )
+    // Re-lock the parent gate as soon as the adult leaves Progress/Settings, so a child who
+    // picks the device up cannot walk straight back in.
+    val onProtectedScreen = destination?.hasRoute<Stats>() == true ||
+        destination?.hasRoute<Settings>() == true
+    LaunchedEffect(onProtectedScreen) {
+        if (!onProtectedScreen) isParentUnlocked = false
+    }
+
     // Bottom bar only on top-level screens; games use the full screen.
     val showBottomBar = items.any { it.selected }
 

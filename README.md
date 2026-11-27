@@ -12,9 +12,10 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 - **Tracing Garden**: trace lowercase letters in the correct stroke order; a flower blooms when done
 - **Progress screen**: per-sound mastery and overall accuracy (protected by Parent Gate)
 - **Settings**: phonics phase, sound on/off, reduce motion (saved with DataStore, protected by Parent Gate)
-- **Parent Gate**: adult verification math challenge to protect adult settings and statistics
+- **Parent Gate**: adult verification math challenge to protect adult settings and statistics; it re-locks as soon as the adult leaves those screens
 - Spaced-repetition (Leitner boxes) decides which sounds appear more often
-- Offline-first: bundled starter data, optional word refresh from the Datamuse API
+- **Online word packs:** new words and pictures are downloaded from `content/word_pack.json` in this repo (Retrofit + kotlinx.serialization), validated on the device, and cached in Room. Works offline using the bundled words.
+- **Progress screen:** a "last 7 days" chart and a "practise next" list, from a per-day SQL query (no streaks or targets)
 
 ## Planned
 - Recorded phoneme audio
@@ -23,26 +24,28 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 ```
 Compose Screen -> ViewModel (StateFlow) -> Repository -> Room / Retrofit
 ```
-- `engine/`: plain Kotlin game logic (ChallengeGenerator, MasteryScheduler, TraceValidator)
-- `data/`: Room entities and DAOs, Retrofit API, repositories
+- `engine/`: plain Kotlin game logic (ChallengeGenerator, WordChallengeGenerator, MasteryScheduler, TraceValidator, LetterShapes, ParentGateValidator)
+- `util/`: `Speaker` interface and its Android TextToSpeech implementation (swapped for a fake in tests)
+- `data/`: Room entities, DAOs and migrations (schema v2), Retrofit word pack API, repositories
 - `di/`: Hilt modules
 - `ui/`: Compose screens, ViewModels and type-safe navigation
 
 ## Ethics and privacy by design
 - No accounts, no ads, no analytics, no tracking
 - All progress stored on the device only (backups disabled)
-- Network used only to fetch public word lists; no personal data sent
+- Network is used only to download a public word list from this repository; nothing about the child is ever sent
 - Gentle feedback (no buzzers, timers, streaks or guilt mechanics)
 - Natural session endings with break prompts
-- Words are only shown to children if they are in the bundled picture allowlist; network words without a picture are never displayed
+- Downloaded content is never trusted: each word is validated (plain lowercase letters, a taught first letter, a short emoji picture with no text) before it is stored, and the database will not accept a word without a picture
 - Games work by tap as well as drag (motor and screen-reader accessibility); reduce-motion setting respected
 
-## Running the tests
-`./gradlew test` (JVM unit tests for the engine package)
+## Testing
+- **Model and ViewModel tests (JVM):** `./gradlew test`. Covers the game engine (challenge generation, mastery scheduling, trace validation, letter shapes, parent gate maths), seed data integrity, and every ViewModel using fake repositories and a fake `Speaker`.
+- **GUI tests (Compose UI, instrumented):** `./gradlew connectedDebugAndroidTest` with an emulator or device running. Covers the landing page, settings, parent gate dialog and round complete screens. Screens are written with state hoisting (`LandingContent`, `SettingsContent`) so they can be tested without Hilt.
 
 ## Inspiration and credits
 - Game-hub concept inspired by Phonics & Stuff (https://phonicsandstuff.com/games). No assets or code copied.
-- Datamuse API (https://www.datamuse.com/api/)
+- Word packs are original content hosted in this repository (`content/word_pack.json`)
 
 ## AI use declaration
 Add your Declaration of AI-Generated Material here and submit it with the assignment.

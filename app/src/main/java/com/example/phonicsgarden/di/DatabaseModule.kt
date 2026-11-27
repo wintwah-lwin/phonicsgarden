@@ -3,6 +3,7 @@ package com.example.phonicsgarden.di
 import android.content.Context
 import androidx.room.Room
 import com.example.phonicsgarden.data.local.AppDatabase
+import com.example.phonicsgarden.data.local.MIGRATION_1_2
 import com.example.phonicsgarden.data.local.dao.AttemptDao
 import com.example.phonicsgarden.data.local.dao.GraphemeDao
 import com.example.phonicsgarden.data.local.dao.MasteryDao
@@ -21,7 +22,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "phonics_garden.db").build()
+        Room.databaseBuilder(context, AppDatabase::class.java, "phonics_garden.db")
+            .addMigrations(MIGRATION_1_2)
+            .build()
 
     @Provides fun provideGraphemeDao(db: AppDatabase): GraphemeDao = db.graphemeDao()
     @Provides fun provideWordDao(db: AppDatabase): WordDao = db.wordDao()

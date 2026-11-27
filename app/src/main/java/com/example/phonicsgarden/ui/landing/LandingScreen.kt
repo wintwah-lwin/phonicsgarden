@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
+/** Connects the landing page to its ViewModel. The UI itself lives in [LandingContent]. */
 @Composable
 fun LandingScreen(
     onBubblePop: () -> Unit,
@@ -30,7 +31,22 @@ fun LandingScreen(
     viewModel: LandingViewModel = hiltViewModel()
 ) {
     val garden by viewModel.garden.collectAsStateWithLifecycle()
+    LandingContent(
+        garden = garden,
+        onBubblePop = onBubblePop,
+        onFeedMonster = onFeedMonster,
+        onTracing = onTracing
+    )
+}
 
+/** Stateless landing page UI (state hoisting), so it can be previewed and UI tested easily. */
+@Composable
+fun LandingContent(
+    garden: GardenState,
+    onBubblePop: () -> Unit,
+    onFeedMonster: () -> Unit,
+    onTracing: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

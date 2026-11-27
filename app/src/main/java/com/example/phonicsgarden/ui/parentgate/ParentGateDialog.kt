@@ -21,14 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.phonicsgarden.engine.MathQuestion
 import com.example.phonicsgarden.engine.ParentGateValidator
 
 @Composable
 fun ParentGateDialog(
     onSuccess: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    question: MathQuestion = remember { ParentGateValidator.generateQuestion() }
 ) {
-    val question = remember { ParentGateValidator.generateQuestion() }
     var answerText by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
 

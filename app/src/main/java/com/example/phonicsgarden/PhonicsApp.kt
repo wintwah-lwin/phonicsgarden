@@ -21,7 +21,7 @@ class PhonicsApp : Application() {
         // Seed the local DB first so the app works offline, then try to enrich it from the network.
         appScope.launch {
             wordRepository.seedIfEmpty()
-            wordRepository.refreshWordsFromNetwork()
+            wordRepository.syncWordPack()
         }
     }
 }

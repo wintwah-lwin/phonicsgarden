@@ -19,10 +19,10 @@ class WordChallengeGeneratorTest {
     private val graphemes = listOf(s, t, m, c, k)
 
     private val words = listOf(
-        Word(text = "sun", firstLetter = "s"), Word(text = "sock", firstLetter = "s"),
-        Word(text = "tent", firstLetter = "t"), Word(text = "tree", firstLetter = "t"),
-        Word(text = "moon", firstLetter = "m"),
-        Word(text = "cat", firstLetter = "c"), Word(text = "kite", firstLetter = "k")
+        Word(text = "sun", firstLetter = "s", emoji = "🟢"), Word(text = "sock", firstLetter = "s", emoji = "🟢"),
+        Word(text = "tent", firstLetter = "t", emoji = "🟢"), Word(text = "tree", firstLetter = "t", emoji = "🟢"),
+        Word(text = "moon", firstLetter = "m", emoji = "🟢"),
+        Word(text = "cat", firstLetter = "c", emoji = "🟢"), Word(text = "kite", firstLetter = "k", emoji = "🟢")
     )
     private val generator = WordChallengeGenerator()
 
@@ -48,6 +48,12 @@ class WordChallengeGeneratorTest {
         assertTrue(challenge.isCorrect("kite"))
         // Only one of cat/kite can be offered, so the child is never shown two right answers.
         assertEquals(1, challenge.options.count { it == "cat" || it == "kite" })
+    }
+
+    @Test
+    fun `every option comes with its picture`() {
+        val challenge = generator.generate(s, graphemes, words, random = Random(4))!!
+        assertEquals(challenge.options.toSet(), challenge.pictures.keys)
     }
 
     @Test

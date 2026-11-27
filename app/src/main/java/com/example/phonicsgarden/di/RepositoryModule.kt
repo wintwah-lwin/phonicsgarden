@@ -2,6 +2,8 @@ package com.example.phonicsgarden.di
 
 import com.example.phonicsgarden.data.repository.ProgressRepository
 import com.example.phonicsgarden.data.repository.ProgressRepositoryImpl
+import com.example.phonicsgarden.data.repository.SettingsRepository
+import com.example.phonicsgarden.data.repository.SettingsRepositoryImpl
 import com.example.phonicsgarden.data.repository.WordRepository
 import com.example.phonicsgarden.data.repository.WordRepositoryImpl
 import dagger.Binds
@@ -19,4 +21,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindProgressRepository(impl: ProgressRepositoryImpl): ProgressRepository
+
+    @Binds @Singleton
+    abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
 }

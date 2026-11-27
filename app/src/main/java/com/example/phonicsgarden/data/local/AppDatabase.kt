@@ -13,7 +13,7 @@ import com.example.phonicsgarden.data.local.entity.Word
 
 @Database(
     entities = [Grapheme::class, Word::class, Attempt::class, Mastery::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

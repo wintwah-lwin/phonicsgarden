@@ -34,8 +34,13 @@ object SeedData {
     )
 
     /** Every word with a picture, tagged with the phase of its first letter. */
-    val words: List<Word> = WordPictures.emoji.keys.map { text ->
+    val words: List<Word> = WordPictures.emoji.map { (text, emoji) ->
         val letter = text.first().toString()
-        Word(text = text, firstLetter = letter, phase = graphemes.first { it.letter == letter }.phase)
+        Word(
+            text = text,
+            firstLetter = letter,
+            phase = graphemes.first { it.letter == letter }.phase,
+            emoji = emoji
+        )
     }
 }

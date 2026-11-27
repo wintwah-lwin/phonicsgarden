@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.phonicsgarden.data.local.WordPictures
 import com.example.phonicsgarden.ui.games.Feedback
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -131,6 +130,7 @@ fun FeedMonsterScreen(
                     key(state.questionNumber, word) {
                         PictureCard(
                             word = word,
+                            emoji = challenge.pictures[word] ?: "❓",
                             enabled = !state.locked,
                             monsterBounds = monsterBounds,
                             onFed = { viewModel.onFed(word) }
@@ -149,6 +149,7 @@ fun FeedMonsterScreen(
 @Composable
 private fun PictureCard(
     word: String,
+    emoji: String,
     enabled: Boolean,
     monsterBounds: Rect?,
     onFed: () -> Unit
@@ -197,7 +198,7 @@ private fun PictureCard(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            Text(WordPictures.emojiFor(word) ?: "❓", fontSize = 48.sp)
+            Text(emoji, fontSize = 48.sp)
             Text(word, style = MaterialTheme.typography.titleMedium)
         }
     }

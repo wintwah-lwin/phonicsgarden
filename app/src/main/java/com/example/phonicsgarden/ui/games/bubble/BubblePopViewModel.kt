@@ -9,7 +9,7 @@ import com.example.phonicsgarden.data.repository.WordRepository
 import com.example.phonicsgarden.engine.Challenge
 import com.example.phonicsgarden.engine.ChallengeGenerator
 import com.example.phonicsgarden.ui.games.Feedback
-import com.example.phonicsgarden.util.TtsSpeaker
+import com.example.phonicsgarden.util.Speaker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,7 @@ class BubblePopViewModel @Inject constructor(
     private val progressRepository: ProgressRepository,
     private val settingsRepository: SettingsRepository,
     private val generator: ChallengeGenerator,
-    private val speaker: TtsSpeaker
+    private val speaker: Speaker
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BubblePopState())

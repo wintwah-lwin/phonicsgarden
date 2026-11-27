@@ -1,6 +1,6 @@
 package com.example.phonicsgarden.di
 
-import com.example.phonicsgarden.data.remote.DatamuseApi
+import com.example.phonicsgarden.data.remote.WordPackApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,12 +22,12 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(json: Json): Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.datamuse.com/")
+        .baseUrl(WordPackApi.BASE_URL)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
     @Provides
     @Singleton
-    fun provideDatamuseApi(retrofit: Retrofit): DatamuseApi =
-        retrofit.create(DatamuseApi::class.java)
+    fun provideWordPackApi(retrofit: Retrofit): WordPackApi =
+        retrofit.create(WordPackApi::class.java)
 }

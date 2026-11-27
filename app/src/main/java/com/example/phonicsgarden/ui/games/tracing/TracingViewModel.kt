@@ -10,7 +10,7 @@ import com.example.phonicsgarden.engine.LetterShapes
 import com.example.phonicsgarden.engine.TracePoint
 import com.example.phonicsgarden.engine.TraceValidator
 import com.example.phonicsgarden.ui.games.Feedback
-import com.example.phonicsgarden.util.TtsSpeaker
+import com.example.phonicsgarden.util.Speaker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,7 +43,7 @@ class TracingViewModel @Inject constructor(
     private val wordRepository: WordRepository,
     private val progressRepository: ProgressRepository,
     private val settingsRepository: SettingsRepository,
-    private val speaker: TtsSpeaker
+    private val speaker: Speaker
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TracingState())

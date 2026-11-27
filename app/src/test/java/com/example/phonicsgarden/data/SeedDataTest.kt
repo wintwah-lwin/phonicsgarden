@@ -2,6 +2,7 @@ package com.example.phonicsgarden.data
 
 import com.example.phonicsgarden.data.local.SeedData
 import com.example.phonicsgarden.data.local.WordPictures
+import com.example.phonicsgarden.data.local.entity.Word
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -11,7 +12,9 @@ class SeedDataTest {
 
     @Test
     fun `every bundled word has a picture`() {
-        SeedData.words.forEach { assertNotNull(it.text, WordPictures.emojiFor(it.text)) }
+        SeedData.words.forEach {
+            assertEquals(it.text, WordPictures.emojiFor(it.text), it.emoji)
+        }
     }
 
     @Test
@@ -22,6 +25,11 @@ class SeedDataTest {
             assertEquals(grapheme!!.phase, word.phase)
             assertTrue(word.text.startsWith(word.firstLetter))
         }
+    }
+
+    @Test
+    fun `bundled words are marked as bundled`() {
+        SeedData.words.forEach { assertEquals(Word.SOURCE_BUNDLED, it.source) }
     }
 
     @Test

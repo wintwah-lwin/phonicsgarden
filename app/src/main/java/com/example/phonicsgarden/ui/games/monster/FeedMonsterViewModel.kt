@@ -8,7 +8,7 @@ import com.example.phonicsgarden.data.repository.WordRepository
 import com.example.phonicsgarden.engine.FeedChallenge
 import com.example.phonicsgarden.engine.WordChallengeGenerator
 import com.example.phonicsgarden.ui.games.Feedback
-import com.example.phonicsgarden.util.TtsSpeaker
+import com.example.phonicsgarden.util.Speaker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +37,7 @@ class FeedMonsterViewModel @Inject constructor(
     private val progressRepository: ProgressRepository,
     private val settingsRepository: SettingsRepository,
     private val generator: WordChallengeGenerator,
-    private val speaker: TtsSpeaker
+    private val speaker: Speaker
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FeedMonsterState())
@@ -59,7 +59,7 @@ class FeedMonsterViewModel @Inject constructor(
         _state.update { it.copy(reducedMotion = settings.reducedMotion) }
 
         val graphemes = wordRepository.graphemesUpToPhase(settings.phase)
-        val words = wordRepository.pictureWordsUpToPhase(settings.phase)
+        val words = wordRepository.wordsUpToPhase(settings.phase)
         val boxes = progressRepository.masteryBoxes()
 
         // Least-known sounds first; one challenge per distinct sound (c and k share "kuh").

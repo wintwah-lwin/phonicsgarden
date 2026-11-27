@@ -12,6 +12,8 @@ data class FeedChallenge(
     val correctWords: Set<String>,
     /** One correct word plus distractors, shuffled. */
     val options: List<String>,
+    /** The emoji picture shown for each option word. */
+    val pictures: Map<String, String>,
     val graphemeId: Long
 ) {
     fun isCorrect(word: String): Boolean = word in correctWords
@@ -48,6 +50,7 @@ class WordChallengeGenerator @Inject constructor() {
             prompt = "Feed me something that starts with ${target.spokenSound}",
             correctWords = matching.map { it.text }.toSet(),
             options = options,
+            pictures = (distractors + correct).associate { it.text to it.emoji },
             graphemeId = target.id
         )
     }

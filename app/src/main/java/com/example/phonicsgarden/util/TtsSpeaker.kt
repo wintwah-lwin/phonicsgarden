@@ -7,13 +7,17 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Thin wrapper around Android TextToSpeech using an Australian English voice. */
+/** [Speaker] backed by Android TextToSpeech, using an Australian English voice. */
 @Singleton
 class TtsSpeaker @Inject constructor(
     @ApplicationContext context: Context
-) : TextToSpeech.OnInitListener {
+) : Speaker, TextToSpeech.OnInitListener {
 
-    private var ready = false
+    @Volatile private var ready = false
+
+    /** Text requested before the engine finished starting up (e.g. the first prompt of a game). */
+    @Volatile private var pending: String? = null
+
     private val tts = TextToSpeech(context, this)
 
     override fun onInit(status: Int) {
@@ -21,10 +25,16 @@ class TtsSpeaker @Inject constructor(
             tts.language = Locale.forLanguageTag("en-AU")
             tts.setSpeechRate(0.8f) // slower for young learners
             ready = true
+            pending?.let { speak(it) }
+            pending = null
         }
     }
 
-    fun speak(text: String) {
-        if (ready) tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, text)
+    override fun speak(text: String) {
+        if (ready) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, text)
+        } else {
+            pending = text // play as soon as the engine is ready instead of dropping it
+        }
     }
 }
