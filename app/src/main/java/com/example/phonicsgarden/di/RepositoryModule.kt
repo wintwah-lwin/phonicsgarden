@@ -1,5 +1,7 @@
 package com.example.phonicsgarden.di
 
+import com.example.phonicsgarden.data.repository.PlayTimeRepository
+import com.example.phonicsgarden.data.repository.PlayTimeRepositoryImpl
 import com.example.phonicsgarden.data.repository.ProgressRepository
 import com.example.phonicsgarden.data.repository.ProgressRepositoryImpl
 import com.example.phonicsgarden.data.repository.SettingsRepository
@@ -24,4 +26,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
+
+    @Binds @Singleton
+    abstract fun bindPlayTimeRepository(impl: PlayTimeRepositoryImpl): PlayTimeRepository
 }

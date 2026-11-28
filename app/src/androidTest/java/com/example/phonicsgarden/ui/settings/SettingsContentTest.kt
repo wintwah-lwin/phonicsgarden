@@ -27,11 +27,14 @@ class SettingsContentTest {
     private var motionValue: Boolean? = null
     private var locked = false
     private var checkRequested = false
+    private var limitChosen: Int? = null
+    private var privacyOpened = false
 
     private fun showSettings(
         settings: AppSettings = AppSettings(),
         downloadedWords: Int = 0,
-        syncStatus: SyncStatus = SyncStatus.Idle
+        syncStatus: SyncStatus = SyncStatus.Idle,
+        playedTodayMinutes: Int = 0
     ) {
         composeRule.setContent {
             PhonicsGardenTheme {
@@ -43,7 +46,10 @@ class SettingsContentTest {
                     onLock = { locked = true },
                     downloadedWords = downloadedWords,
                     syncStatus = syncStatus,
-                    onCheckForWords = { checkRequested = true }
+                    onCheckForWords = { checkRequested = true },
+                    playedTodayMinutes = playedTodayMinutes,
+                    onDailyLimitSelected = { limitChosen = it },
+                    onOpenPrivacy = { privacyOpened = true }
                 )
             }
         }
@@ -95,6 +101,33 @@ class SettingsContentTest {
         showSettings(syncStatus = SyncStatus.Offline)
         composeRule.onNodeWithText("Couldn't reach the word list. The built-in words still work.")
             .performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun choosingADailyLimit_reportsIt() {
+        showSettings()
+        composeRule.onNodeWithText("10 min").performClick()
+        assertEquals(10, limitChosen)
+    }
+
+    @Test
+    fun dailyLimitOffCanBeChosenAgain() {
+        showSettings(AppSettings(dailyLimitMinutes = 15))
+        composeRule.onNodeWithText("Off").performClick()
+        assertEquals(0, limitChosen)
+    }
+
+    @Test
+    fun showsHowLongHasBeenPlayedToday() {
+        showSettings(playedTodayMinutes = 7)
+        composeRule.onNodeWithText("Played today: 7 min").assertIsDisplayed()
+    }
+
+    @Test
+    fun whatWeStoreButton_opensThePrivacyScreen() {
+        showSettings()
+        composeRule.onNodeWithText("What we store").performScrollTo().performClick()
+        assertTrue(privacyOpened)
     }
 
     @Test

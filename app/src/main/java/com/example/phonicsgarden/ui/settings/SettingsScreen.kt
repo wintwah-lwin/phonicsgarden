@@ -1,5 +1,6 @@
 package com.example.phonicsgarden.ui.settings
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.phonicsgarden.data.repository.AppSettings
+import com.example.phonicsgarden.engine.PlayLimit
 
 private val phaseDescriptions = mapOf(
     1 to "Phase 1: s a t p i n",
@@ -39,11 +41,13 @@ private val phaseDescriptions = mapOf(
 @Composable
 fun SettingsScreen(
     onLock: () -> Unit = {},
+    onOpenPrivacy: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val downloadedWords by viewModel.downloadedWords.collectAsStateWithLifecycle()
     val syncStatus by viewModel.syncStatus.collectAsStateWithLifecycle()
+    val playedToday by viewModel.playedTodayMinutes.collectAsStateWithLifecycle()
     SettingsContent(
         settings = settings,
         onPhaseSelected = viewModel::setPhase,
@@ -52,7 +56,10 @@ fun SettingsScreen(
         onLock = onLock,
         downloadedWords = downloadedWords,
         syncStatus = syncStatus,
-        onCheckForWords = viewModel::checkForNewWords
+        onCheckForWords = viewModel::checkForNewWords,
+        playedTodayMinutes = playedToday,
+        onDailyLimitSelected = viewModel::setDailyLimitMinutes,
+        onOpenPrivacy = onOpenPrivacy
     )
 }
 
@@ -66,7 +73,10 @@ fun SettingsContent(
     onLock: () -> Unit,
     downloadedWords: Int = 0,
     syncStatus: SyncStatus = SyncStatus.Idle,
-    onCheckForWords: () -> Unit = {}
+    onCheckForWords: () -> Unit = {},
+    playedTodayMinutes: Int = 0,
+    onDailyLimitSelected: (Int) -> Unit = {},
+    onOpenPrivacy: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -108,7 +118,44 @@ fun SettingsContent(
             description = "Bubbles stay still instead of floating."
         )
 
+        DailyLimitCard(settings.dailyLimitMinutes, playedTodayMinutes, onDailyLimitSelected)
+
         WordPackCard(downloadedWords, syncStatus, onCheckForWords)
+
+        OutlinedButton(onClick = onOpenPrivacy, modifier = Modifier.fillMaxWidth()) {
+            Text("What we store")
+        }
+    }
+}
+
+/**
+ * A kind limit, set by the grown-up. The child never sees a timer: when the limit is reached the
+ * games rest until tomorrow, and a round is never cut off halfway.
+ */
+@Composable
+private fun DailyLimitCard(limitMinutes: Int, playedTodayMinutes: Int, onSelected: (Int) -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Daily play time", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "When this much has been played today, the games rest until tomorrow. " +
+                    "A round is never stopped halfway.",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                PlayLimit.OPTIONS_MINUTES.forEach { minutes ->
+                    FilterChip(
+                        selected = limitMinutes == minutes,
+                        onClick = { onSelected(minutes) },
+                        label = { Text(if (minutes == 0) "Off" else "$minutes min") }
+                    )
+                }
+            }
+            Text("Played today: $playedTodayMinutes min", style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }
 

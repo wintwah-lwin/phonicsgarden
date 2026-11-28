@@ -1,6 +1,7 @@
 package com.example.phonicsgarden.ui.settings
 
 import com.example.phonicsgarden.data.repository.WordPackSyncResult
+import com.example.phonicsgarden.testutil.FakePlayTimeRepository
 import com.example.phonicsgarden.testutil.FakeSettingsRepository
 import com.example.phonicsgarden.testutil.FakeWordRepository
 import com.example.phonicsgarden.testutil.MainDispatcherRule
@@ -20,7 +21,7 @@ class SettingsViewModelWordPackTest {
 
     private val wordRepo = FakeWordRepository()
     // Created lazily so it is built after MainDispatcherRule has installed the test dispatcher.
-    private val viewModel by lazy { SettingsViewModel(FakeSettingsRepository(), wordRepo) }
+    private val viewModel by lazy { SettingsViewModel(FakeSettingsRepository(), wordRepo, FakePlayTimeRepository()) }
 
     @Test
     fun startsIdle() {

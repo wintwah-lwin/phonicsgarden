@@ -10,3 +10,4 @@ import kotlinx.serialization.Serializable
 @Serializable data class RoundComplete(val correct: Int, val total: Int)
 @Serializable object Stats
 @Serializable object Settings
+@Serializable object Privacy

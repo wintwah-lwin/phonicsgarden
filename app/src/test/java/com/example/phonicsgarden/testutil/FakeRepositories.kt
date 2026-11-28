@@ -5,6 +5,7 @@ import com.example.phonicsgarden.data.local.entity.Grapheme
 import com.example.phonicsgarden.data.local.entity.Word
 import com.example.phonicsgarden.data.repository.AppSettings
 import com.example.phonicsgarden.data.repository.AttemptSummary
+import com.example.phonicsgarden.data.repository.PlayTimeRepository
 import com.example.phonicsgarden.data.repository.ProgressRepository
 import com.example.phonicsgarden.data.repository.SettingsRepository
 import com.example.phonicsgarden.data.repository.WordPackSyncResult
@@ -84,6 +85,13 @@ class FakeProgressRepository : ProgressRepository {
     fun setMasteryBox(graphemeId: Long, box: Int) {
         masteryMap.update { it + (graphemeId to box) }
     }
+
+    override suspend fun deleteAllProgress() {
+        recordedAttempts.clear()
+        masteryMap.value = emptyMap()
+        totalAttempts.value = 0
+        correctAttempts.value = 0
+    }
 }
 
 class FakeSettingsRepository(
@@ -103,6 +111,32 @@ class FakeSettingsRepository(
 
     override suspend fun setReducedMotion(enabled: Boolean) {
         state.update { it.copy(reducedMotion = enabled) }
+    }
+
+    override suspend fun setDailyLimitMinutes(minutes: Int) {
+        state.update { it.copy(dailyLimitMinutes = minutes) }
+    }
+}
+
+class FakePlayTimeRepository : PlayTimeRepository {
+    private val played = MutableStateFlow(0L)
+
+    /** Every amount passed to [addPlayTime], in order. */
+    val added = mutableListOf<Long>()
+
+    override fun observePlayedTodayMillis(): Flow<Long> = played.asStateFlow()
+
+    override suspend fun addPlayTime(millis: Long) {
+        added.add(millis)
+        played.update { it + millis }
+    }
+
+    override suspend fun resetToday() {
+        played.value = 0L
+    }
+
+    fun setPlayedMillis(millis: Long) {
+        played.value = millis
     }
 }
 

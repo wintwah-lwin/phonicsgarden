@@ -3,6 +3,7 @@ package com.example.phonicsgarden.ui.settings
 import com.example.phonicsgarden.data.repository.AppSettings
 import com.example.phonicsgarden.data.repository.SettingsRepository
 import com.example.phonicsgarden.testutil.FakeWordRepository
+import com.example.phonicsgarden.testutil.FakePlayTimeRepository
 import com.example.phonicsgarden.testutil.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,11 +41,15 @@ class SettingsViewModelTest {
             lastMotionSet = enabled
             settingsFlow.value = settingsFlow.value.copy(reducedMotion = enabled)
         }
+
+        override suspend fun setDailyLimitMinutes(minutes: Int) {
+            settingsFlow.value = settingsFlow.value.copy(dailyLimitMinutes = minutes)
+        }
     }
 
     @Test
     fun setPhase_updatesRepositoryAndState() = runTest {
-        val viewModel = SettingsViewModel(fakeRepository, FakeWordRepository())
+        val viewModel = SettingsViewModel(fakeRepository, FakeWordRepository(), FakePlayTimeRepository())
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.settings.collect {}
         }
@@ -57,7 +62,7 @@ class SettingsViewModelTest {
 
     @Test
     fun setSoundEnabled_updatesRepositoryAndState() = runTest {
-        val viewModel = SettingsViewModel(fakeRepository, FakeWordRepository())
+        val viewModel = SettingsViewModel(fakeRepository, FakeWordRepository(), FakePlayTimeRepository())
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.settings.collect {}
         }
@@ -70,7 +75,7 @@ class SettingsViewModelTest {
 
     @Test
     fun setReducedMotion_updatesRepositoryAndState() = runTest {
-        val viewModel = SettingsViewModel(fakeRepository, FakeWordRepository())
+        val viewModel = SettingsViewModel(fakeRepository, FakeWordRepository(), FakePlayTimeRepository())
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.settings.collect {}
         }

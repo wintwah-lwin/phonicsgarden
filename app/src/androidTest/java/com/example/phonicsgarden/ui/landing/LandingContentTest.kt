@@ -1,6 +1,8 @@
 package com.example.phonicsgarden.ui.landing
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -22,14 +24,18 @@ class LandingContentTest {
     private var monsterClicked = false
     private var tracingClicked = false
 
-    private fun showLanding(garden: GardenState = GardenState(mastered = 2, total = 6)) {
+    private fun showLanding(
+        garden: GardenState = GardenState(mastered = 2, total = 6),
+        playTimeUp: Boolean = false
+    ) {
         composeRule.setContent {
             PhonicsGardenTheme {
                 LandingContent(
                     garden = garden,
                     onBubblePop = { bubbleClicked = true },
                     onFeedMonster = { monsterClicked = true },
-                    onTracing = { tracingClicked = true }
+                    onTracing = { tracingClicked = true },
+                    playTimeUp = playTimeUp
                 )
             }
         }
@@ -47,6 +53,23 @@ class LandingContentTest {
     fun gardenCardShowsProgress() {
         showLanding(GardenState(mastered = 2, total = 6))
         composeRule.onNodeWithText("2 of 6 sounds grown").assertIsDisplayed()
+    }
+
+    @Test
+    fun whenPlayTimeIsUp_showsAKindMessageAndRestsTheGames() {
+        showLanding(playTimeUp = true)
+
+        composeRule.onNodeWithText("🌙 That's enough playing for today!").assertIsDisplayed()
+        composeRule.onNodeWithText("Bubble Pop").performScrollTo().assertIsNotEnabled()
+        composeRule.onNodeWithText("Feed the Monster").performScrollTo().assertIsNotEnabled()
+        composeRule.onNodeWithText("Tracing Garden").performScrollTo().assertIsNotEnabled()
+    }
+
+    @Test
+    fun whenThereIsPlayTimeLeft_gamesAreOpen() {
+        showLanding(playTimeUp = false)
+
+        composeRule.onNodeWithText("Bubble Pop").performScrollTo().assertIsEnabled()
     }
 
     @Test

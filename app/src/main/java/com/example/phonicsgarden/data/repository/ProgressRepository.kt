@@ -1,5 +1,7 @@
 package com.example.phonicsgarden.data.repository
 
+import androidx.room.withTransaction
+import com.example.phonicsgarden.data.local.AppDatabase
 import com.example.phonicsgarden.data.local.dao.AttemptDao
 import com.example.phonicsgarden.data.local.dao.MasteryDao
 import com.example.phonicsgarden.data.local.entity.Attempt
@@ -27,10 +29,14 @@ interface ProgressRepository {
 
     /** Answers per day for the last 7 days (oldest first), including days with no practice. */
     fun observeLastSevenDays(): Flow<List<DayActivity>>
+
+    /** Erases every answer and sound level (the garden starts again). Settings are kept. */
+    suspend fun deleteAllProgress()
 }
 
 @Singleton
 class ProgressRepositoryImpl @Inject constructor(
+    private val database: AppDatabase,
     private val attemptDao: AttemptDao,
     private val masteryDao: MasteryDao
 ) : ProgressRepository {
@@ -58,6 +64,14 @@ class ProgressRepositoryImpl @Inject constructor(
         combine(attemptDao.observeTotal(), attemptDao.observeCorrect()) { total, correct ->
             AttemptSummary(total, correct)
         }
+
+    override suspend fun deleteAllProgress() {
+        // One transaction, so progress is never left half deleted.
+        database.withTransaction {
+            attemptDao.deleteAll()
+            masteryDao.deleteAll()
+        }
+    }
 
     override fun observeLastSevenDays(): Flow<List<DayActivity>> {
         val today = LocalDate.now()

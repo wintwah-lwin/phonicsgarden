@@ -11,6 +11,8 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 - **Feed the Monster**: hear a sound, then drag (or tap) the picture that starts with it onto the monster
 - **Tracing Garden**: trace lowercase letters in the correct stroke order; a flower blooms when done
 - **Sound effects:** a bubble pop, monster chomp, flower bloom and round-complete fanfare (SoundPool). Wrong answers get a soft, quiet boop, never a buzzer, and the parent's Sound setting mutes both voice and effects
+- **Daily play time (parent-set):** off, 10, 15, 20 or 30 minutes. Play time is counted only while a game is on screen, never in the background. At the limit the games rest until tomorrow with a calm message. There is no timer in front of the child, and a round is never cut off halfway.
+- **What we store screen:** shows live counts of what is kept on the device, what leaves it, and what is never done, with a confirmed "Delete all progress" button (one database transaction)
 - **Progress screen**: per-sound mastery and overall accuracy (protected by Parent Gate)
 - **Settings**: phonics phase, sound on/off, reduce motion (saved with DataStore, protected by Parent Gate)
 - **Parent Gate**: adult verification math challenge to protect adult settings and statistics; it re-locks as soon as the adult leaves those screens

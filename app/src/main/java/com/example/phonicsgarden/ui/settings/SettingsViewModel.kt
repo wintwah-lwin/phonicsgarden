@@ -3,14 +3,17 @@ package com.example.phonicsgarden.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.phonicsgarden.data.repository.AppSettings
+import com.example.phonicsgarden.data.repository.PlayTimeRepository
 import com.example.phonicsgarden.data.repository.SettingsRepository
 import com.example.phonicsgarden.data.repository.WordPackSyncResult
 import com.example.phonicsgarden.data.repository.WordRepository
+import com.example.phonicsgarden.engine.PlayLimit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,7 +30,8 @@ sealed interface SyncStatus {
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
-    private val wordRepository: WordRepository
+    private val wordRepository: WordRepository,
+    playTimeRepository: PlayTimeRepository
 ) : ViewModel() {
 
     val settings: StateFlow<AppSettings> = repository.settings
@@ -36,12 +40,18 @@ class SettingsViewModel @Inject constructor(
     val downloadedWords: StateFlow<Int> = wordRepository.observeDownloadedWordCount()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
+    /** Minutes played today, shown to the grown-up next to the daily limit. */
+    val playedTodayMinutes: StateFlow<Int> = playTimeRepository.observePlayedTodayMillis()
+        .map { PlayLimit.minutesPlayed(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
     private val _syncStatus = MutableStateFlow<SyncStatus>(SyncStatus.Idle)
     val syncStatus: StateFlow<SyncStatus> = _syncStatus.asStateFlow()
 
     fun setPhase(phase: Int) = viewModelScope.launch { repository.setPhase(phase) }
     fun setSoundEnabled(enabled: Boolean) = viewModelScope.launch { repository.setSoundEnabled(enabled) }
     fun setReducedMotion(enabled: Boolean) = viewModelScope.launch { repository.setReducedMotion(enabled) }
+    fun setDailyLimitMinutes(minutes: Int) = viewModelScope.launch { repository.setDailyLimitMinutes(minutes) }
 
     /** Downloads the latest word pack (only when the parent asks, plus once at app start). */
     fun checkForNewWords() {

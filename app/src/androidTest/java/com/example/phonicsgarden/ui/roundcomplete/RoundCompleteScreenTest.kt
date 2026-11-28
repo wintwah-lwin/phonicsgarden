@@ -20,7 +20,9 @@ class RoundCompleteScreenTest {
     @Test
     fun showsTheScoreAndABreakSuggestion() {
         composeRule.setContent {
-            PhonicsGardenTheme { RoundCompleteScreen(correct = 4, total = 6, onDone = {}) }
+            PhonicsGardenTheme {
+                RoundCompleteContent(correct = 4, total = 6, limitReached = false, onDone = {})
+            }
         }
 
         composeRule.onNodeWithText("You got 4 of 6 on the first try.").assertIsDisplayed()
@@ -28,10 +30,24 @@ class RoundCompleteScreenTest {
     }
 
     @Test
+    fun whenTheDailyLimitIsReached_saysAllDoneForToday() {
+        composeRule.setContent {
+            PhonicsGardenTheme {
+                RoundCompleteContent(correct = 6, total = 6, limitReached = true, onDone = {})
+            }
+        }
+
+        composeRule.onNodeWithText("That's all the playing for today. Your garden will be here tomorrow!")
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun backButton_returnsToTheGarden() {
         var done = false
         composeRule.setContent {
-            PhonicsGardenTheme { RoundCompleteScreen(correct = 6, total = 6, onDone = { done = true }) }
+            PhonicsGardenTheme {
+                RoundCompleteContent(correct = 6, total = 6, limitReached = false, onDone = { done = true })
+            }
         }
 
         composeRule.onNodeWithText("Back to the garden").performClick()

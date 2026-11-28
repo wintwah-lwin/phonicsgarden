@@ -2,6 +2,8 @@ package com.example.phonicsgarden.ui.landing
 
 import com.example.phonicsgarden.engine.MasteryScheduler
 import com.example.phonicsgarden.testutil.FakeProgressRepository
+import com.example.phonicsgarden.testutil.FakeSettingsRepository
+import com.example.phonicsgarden.testutil.FakePlayTimeRepository
 import com.example.phonicsgarden.testutil.FakeWordRepository
 import com.example.phonicsgarden.testutil.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +28,7 @@ class LandingViewModelTest {
         // Set grapheme 1 to MAX_BOX (mastered)
         fakeProgressRepo.setMasteryBox(graphemeId = 1L, box = MasteryScheduler.MAX_BOX)
 
-        val viewModel = LandingViewModel(fakeWordRepo, fakeProgressRepo)
+        val viewModel = LandingViewModel(fakeWordRepo, fakeProgressRepo, FakeSettingsRepository(), FakePlayTimeRepository())
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.garden.collect {}

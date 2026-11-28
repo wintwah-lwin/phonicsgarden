@@ -31,8 +31,10 @@ fun LandingScreen(
     viewModel: LandingViewModel = hiltViewModel()
 ) {
     val garden by viewModel.garden.collectAsStateWithLifecycle()
+    val playTimeUp by viewModel.playTimeUp.collectAsStateWithLifecycle()
     LandingContent(
         garden = garden,
+        playTimeUp = playTimeUp,
         onBubblePop = onBubblePop,
         onFeedMonster = onFeedMonster,
         onTracing = onTracing
@@ -45,7 +47,8 @@ fun LandingContent(
     garden: GardenState,
     onBubblePop: () -> Unit,
     onFeedMonster: () -> Unit,
-    onTracing: () -> Unit
+    onTracing: () -> Unit,
+    playTimeUp: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -61,11 +64,25 @@ fun LandingContent(
         )
         Text("Let's grow some sounds!", style = MaterialTheme.typography.titleLarge)
 
+        if (playTimeUp) RestingCard()
+
         GardenCard(garden)
 
-        GameTile("🫧", "Bubble Pop", "Hear a sound and pop the letter", onBubblePop)
-        GameTile("👾", "Feed the Monster", "Feed me words that start with a sound", onFeedMonster)
-        GameTile("✏️", "Tracing Garden", "Trace a letter and watch it bloom", onTracing)
+        val playing = !playTimeUp
+        GameTile("🫧", "Bubble Pop", "Hear a sound and pop the letter", playing, onBubblePop)
+        GameTile("👾", "Feed the Monster", "Feed me words that start with a sound", playing, onFeedMonster)
+        GameTile("✏️", "Tracing Garden", "Trace a letter and watch it bloom", playing, onTracing)
+    }
+}
+
+/** Shown when the grown-up's daily play time is used up: kind, calm and with no pressure. */
+@Composable
+private fun RestingCard() {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("🌙 That's enough playing for today!", style = MaterialTheme.typography.titleMedium)
+            Text("Your garden will be waiting for you tomorrow.")
+        }
     }
 }
 
@@ -82,8 +99,8 @@ private fun GardenCard(garden: GardenState) {
 }
 
 @Composable
-private fun GameTile(emoji: String, title: String, subtitle: String, onClick: () -> Unit) {
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+private fun GameTile(emoji: String, title: String, subtitle: String, enabled: Boolean, onClick: () -> Unit) {
+    Card(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(emoji, fontSize = 48.sp)
             Spacer(Modifier.width(16.dp))

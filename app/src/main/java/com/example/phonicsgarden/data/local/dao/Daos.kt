@@ -69,6 +69,9 @@ interface AttemptDao {
         """
     )
     fun observeDailyStats(since: Long): Flow<List<DailyStat>>
+
+    @Query("DELETE FROM attempts")
+    suspend fun deleteAll()
 }
 
 @Dao
@@ -84,4 +87,7 @@ interface MasteryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(mastery: Mastery)
+
+    @Query("DELETE FROM mastery")
+    suspend fun deleteAll()
 }

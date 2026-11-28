@@ -23,6 +23,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import com.example.phonicsgarden.ui.playtime.PlayTimeViewModel
+import com.example.phonicsgarden.ui.privacy.PrivacyScreen
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.phonicsgarden.ui.parentgate.ParentGateDialog
@@ -50,6 +56,17 @@ fun AppNavHost() {
     var isParentUnlocked by remember { mutableStateOf(false) }
     var pendingRoute by remember { mutableStateOf<Any?>(null) }
 
+    // Count the time games are on screen (never while the app is in the background), for the
+    // grown-up's daily play limit. Nothing about this is shown to the child.
+    val playTimeViewModel: PlayTimeViewModel = hiltViewModel()
+    val isGameScreen = destination?.hasRoute<BubblePop>() == true ||
+        destination?.hasRoute<FeedMonster>() == true ||
+        destination?.hasRoute<Tracing>() == true
+    val gameShowing by rememberUpdatedState(isGameScreen)
+    LaunchedEffect(isGameScreen) { playTimeViewModel.onGameVisible(isGameScreen) }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { playTimeViewModel.onGameVisible(false) }
+    LifecycleEventEffect(Lifecycle.Event.ON_START) { playTimeViewModel.onGameVisible(gameShowing) }
+
     val items = listOf(
         TopLevelItem("Garden", Landing, Icons.Default.Home, destination?.hasRoute<Landing>() == true),
         TopLevelItem("Progress", Stats, Icons.Default.Star, destination?.hasRoute<Stats>() == true),
@@ -58,7 +75,8 @@ fun AppNavHost() {
     // Re-lock the parent gate as soon as the adult leaves Progress/Settings, so a child who
     // picks the device up cannot walk straight back in.
     val onProtectedScreen = destination?.hasRoute<Stats>() == true ||
-        destination?.hasRoute<Settings>() == true
+        destination?.hasRoute<Settings>() == true ||
+        destination?.hasRoute<Privacy>() == true
     LaunchedEffect(onProtectedScreen) {
         if (!onProtectedScreen) isParentUnlocked = false
     }
@@ -166,10 +184,16 @@ fun AppNavHost() {
                 })
             }
             composable<Settings> {
-                SettingsScreen(onLock = {
-                    isParentUnlocked = false
-                    navController.popBackStack<Landing>(inclusive = false)
-                })
+                SettingsScreen(
+                    onLock = {
+                        isParentUnlocked = false
+                        navController.popBackStack<Landing>(inclusive = false)
+                    },
+                    onOpenPrivacy = { navController.navigate(Privacy) }
+                )
+            }
+            composable<Privacy> {
+                PrivacyScreen(onBack = { navController.popBackStack() })
             }
         }
     }
