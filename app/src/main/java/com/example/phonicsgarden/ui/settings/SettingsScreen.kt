@@ -101,7 +101,12 @@ fun SettingsContent(
         Text(phaseDescriptions[settings.phase] ?: "", style = MaterialTheme.typography.bodyMedium)
 
         SettingSwitch("Sound", settings.soundEnabled, onSoundChanged)
-        SettingSwitch("Reduce motion", settings.reducedMotion, onReducedMotionChanged)
+        SettingSwitch(
+            label = "Reduce motion",
+            checked = settings.reducedMotion,
+            onChange = onReducedMotionChanged,
+            description = "Bubbles stay still instead of floating."
+        )
 
         WordPackCard(downloadedWords, syncStatus, onCheckForWords)
     }
@@ -131,13 +136,21 @@ private fun syncStatusMessage(status: SyncStatus): String = when (status) {
 }
 
 @Composable
-private fun SettingSwitch(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+private fun SettingSwitch(
+    label: String,
+    checked: Boolean,
+    onChange: (Boolean) -> Unit,
+    description: String? = null
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, style = MaterialTheme.typography.titleMedium)
+        Column(Modifier.weight(1f)) {
+            Text(label, style = MaterialTheme.typography.titleMedium)
+            if (description != null) Text(description, style = MaterialTheme.typography.bodySmall)
+        }
         Switch(checked = checked, onCheckedChange = onChange)
     }
 }

@@ -29,7 +29,9 @@ data class BubblePopState(
     val correctCount: Int = 0,
     val feedback: Feedback? = null,
     val locked: Boolean = false,
-    val finished: Boolean = false
+    val finished: Boolean = false,
+    /** True when the parent chose "Reduce motion": bubbles hold still instead of floating. */
+    val reducedMotion: Boolean = false
 )
 
 @HiltViewModel
@@ -59,6 +61,7 @@ class BubblePopViewModel @Inject constructor(
         wordRepository.seedIfEmpty() // safe if already seeded
         val settings = settingsRepository.settings.first()
         soundEnabled = settings.soundEnabled
+        _state.update { it.copy(reducedMotion = settings.reducedMotion) }
         pool = wordRepository.graphemesUpToPhase(settings.phase)
 
         // Sounds the child knows least come first (stable sort keeps the shuffle within a box).

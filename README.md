@@ -7,7 +7,7 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 
 ## Current features
 - **Garden landing page** showing progress as flowers, with shortcuts to the games
-- **Bubble Pop**: hear a sound (text-to-speech, en-AU) and pop the matching letter
+- **Bubble Pop**: hear a sound (text-to-speech, en-AU) and pop the matching letter as bubbles drift slowly upwards. With "Reduce motion" or a screen reader on, the bubbles hold still in a grid instead
 - **Feed the Monster**: hear a sound, then drag (or tap) the picture that starts with it onto the monster
 - **Tracing Garden**: trace lowercase letters in the correct stroke order; a flower blooms when done
 - **Sound effects:** a bubble pop, monster chomp, flower bloom and round-complete fanfare (SoundPool). Wrong answers get a soft, quiet boop, never a buzzer, and the parent's Sound setting mutes both voice and effects
@@ -25,7 +25,7 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 ```
 Compose Screen -> ViewModel (StateFlow) -> Repository -> Room / Retrofit
 ```
-- `engine/`: plain Kotlin game logic (ChallengeGenerator, WordChallengeGenerator, MasteryScheduler, TraceValidator, LetterShapes, ParentGateValidator)
+- `engine/`: plain Kotlin game logic (ChallengeGenerator, WordChallengeGenerator, MasteryScheduler, TraceValidator, LetterShapes, BubbleField, ParentGateValidator)
 - `util/`: `Speaker` (TextToSpeech) and `SoundEffects` (SoundPool) interfaces with Android implementations, swapped for fakes in tests
 - `data/`: Room entities, DAOs and migrations (schema v2), Retrofit word pack API, repositories
 - `di/`: Hilt modules
