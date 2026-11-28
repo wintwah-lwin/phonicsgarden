@@ -9,6 +9,8 @@ import com.example.phonicsgarden.data.repository.WordRepository
 import com.example.phonicsgarden.engine.Challenge
 import com.example.phonicsgarden.engine.ChallengeGenerator
 import com.example.phonicsgarden.ui.games.Feedback
+import com.example.phonicsgarden.util.SoundEffect
+import com.example.phonicsgarden.util.SoundEffects
 import com.example.phonicsgarden.util.Speaker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -36,7 +38,8 @@ class BubblePopViewModel @Inject constructor(
     private val progressRepository: ProgressRepository,
     private val settingsRepository: SettingsRepository,
     private val generator: ChallengeGenerator,
-    private val speaker: Speaker
+    private val speaker: Speaker,
+    private val effects: SoundEffects
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BubblePopState())
@@ -94,6 +97,7 @@ class BubblePopViewModel @Inject constructor(
             progressRepository.recordAttempt(challenge.graphemeId, GAME_NAME, correct)
 
             if (correct) {
+                playEffect(SoundEffect.POP)
                 _state.update {
                     it.copy(
                         feedback = Feedback.CORRECT,
@@ -104,12 +108,14 @@ class BubblePopViewModel @Inject constructor(
                 delay(FEEDBACK_DELAY_MS)
                 index++
                 if (index >= targets.size) {
+                    playEffect(SoundEffect.FANFARE)
                     _state.update { it.copy(finished = true) }
                 } else {
                     showChallenge()
                 }
             } else {
                 answeredFirstTry = false
+                playEffect(SoundEffect.SOFT)
                 _state.update { it.copy(feedback = Feedback.TRY_AGAIN) }
                 speak(challenge.prompt) // gentle repeat, no harsh sounds
             }
@@ -118,6 +124,10 @@ class BubblePopViewModel @Inject constructor(
 
     private fun speak(text: String) {
         if (soundEnabled) speaker.speak(text)
+    }
+
+    private fun playEffect(effect: SoundEffect) {
+        if (soundEnabled) effects.play(effect)
     }
 
     companion object {

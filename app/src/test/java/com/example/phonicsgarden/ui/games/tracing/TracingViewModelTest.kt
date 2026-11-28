@@ -5,12 +5,14 @@ import com.example.phonicsgarden.data.repository.AppSettings
 import com.example.phonicsgarden.engine.LetterShapes
 import com.example.phonicsgarden.testutil.FakeProgressRepository
 import com.example.phonicsgarden.testutil.FakeSettingsRepository
+import com.example.phonicsgarden.testutil.FakeSoundEffects
 import com.example.phonicsgarden.testutil.FakeTtsSpeaker
 import com.example.phonicsgarden.testutil.FakeWordRepository
 import com.example.phonicsgarden.testutil.MainDispatcherRule
 import com.example.phonicsgarden.testutil.densify
 import com.example.phonicsgarden.testutil.scribble
 import com.example.phonicsgarden.ui.games.Feedback
+import com.example.phonicsgarden.util.SoundEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -29,6 +31,7 @@ class TracingViewModelTest {
 
     private val progressRepo = FakeProgressRepository()
     private val speaker = FakeTtsSpeaker()
+    private val effects = FakeSoundEffects()
 
     /** Only the letter "t" (two strokes), so multi-stroke behaviour is deterministic. */
     private val onlyT = FakeWordRepository(graphemesList = listOf(Grapheme(3, "t", "tuh", 1)))
@@ -36,7 +39,7 @@ class TracingViewModelTest {
     private fun createViewModel(
         wordRepo: FakeWordRepository = FakeWordRepository(),
         settings: AppSettings = AppSettings()
-    ) = TracingViewModel(wordRepo, progressRepo, FakeSettingsRepository(settings), speaker)
+    ) = TracingViewModel(wordRepo, progressRepo, FakeSettingsRepository(settings), speaker, effects)
 
     private fun TracingViewModel.traceCurrentLetterCorrectly() {
         val letter = this.state.value.letter
@@ -145,6 +148,50 @@ class TracingViewModelTest {
         advanceUntilIdle()
 
         assertTrue(speaker.spokenTexts.isEmpty())
+    }
+
+    @Test
+    fun tracingCorrectly_playsTheBloomSound() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.traceCurrentLetterCorrectly()
+
+        assertEquals(listOf(SoundEffect.BLOOM), effects.played)
+    }
+
+    @Test
+    fun aMiss_playsOnlyTheSoftSound() = runTest {
+        val viewModel = createViewModel(onlyT)
+        advanceUntilIdle()
+
+        repeat(viewModel.state.value.guides.size) { viewModel.onStrokeFinished(scribble) }
+
+        assertEquals(listOf(SoundEffect.SOFT), effects.played)
+    }
+
+    @Test
+    fun finishingTheRound_playsTheFanfare() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        repeat(TracingViewModel.ROUND_LENGTH) {
+            viewModel.traceCurrentLetterCorrectly()
+            advanceUntilIdle()
+        }
+
+        assertEquals(SoundEffect.FANFARE, effects.played.last())
+    }
+
+    @Test
+    fun soundOff_playsNoEffects() = runTest {
+        val viewModel = createViewModel(settings = AppSettings(soundEnabled = false))
+        advanceUntilIdle()
+
+        viewModel.traceCurrentLetterCorrectly()
+        advanceUntilIdle()
+
+        assertTrue(effects.played.isEmpty())
     }
 
     @Test

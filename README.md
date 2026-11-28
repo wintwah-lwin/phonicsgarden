@@ -10,6 +10,7 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 - **Bubble Pop**: hear a sound (text-to-speech, en-AU) and pop the matching letter
 - **Feed the Monster**: hear a sound, then drag (or tap) the picture that starts with it onto the monster
 - **Tracing Garden**: trace lowercase letters in the correct stroke order; a flower blooms when done
+- **Sound effects:** a bubble pop, monster chomp, flower bloom and round-complete fanfare (SoundPool). Wrong answers get a soft, quiet boop, never a buzzer, and the parent's Sound setting mutes both voice and effects
 - **Progress screen**: per-sound mastery and overall accuracy (protected by Parent Gate)
 - **Settings**: phonics phase, sound on/off, reduce motion (saved with DataStore, protected by Parent Gate)
 - **Parent Gate**: adult verification math challenge to protect adult settings and statistics; it re-locks as soon as the adult leaves those screens
@@ -25,7 +26,7 @@ Built for CP3406 / CP5307 Assessment 3 using Kotlin, Jetpack Compose and Materia
 Compose Screen -> ViewModel (StateFlow) -> Repository -> Room / Retrofit
 ```
 - `engine/`: plain Kotlin game logic (ChallengeGenerator, WordChallengeGenerator, MasteryScheduler, TraceValidator, LetterShapes, ParentGateValidator)
-- `util/`: `Speaker` interface and its Android TextToSpeech implementation (swapped for a fake in tests)
+- `util/`: `Speaker` (TextToSpeech) and `SoundEffects` (SoundPool) interfaces with Android implementations, swapped for fakes in tests
 - `data/`: Room entities, DAOs and migrations (schema v2), Retrofit word pack API, repositories
 - `di/`: Hilt modules
 - `ui/`: Compose screens, ViewModels and type-safe navigation
@@ -46,6 +47,7 @@ Compose Screen -> ViewModel (StateFlow) -> Repository -> Room / Retrofit
 ## Inspiration and credits
 - Game-hub concept inspired by Phonics & Stuff (https://phonicsandstuff.com/games). No assets or code copied.
 - Word packs are original content hosted in this repository (`content/word_pack.json`)
+- Sound effects are original, synthesized by `tools/generate_sounds.py` (no third-party audio)
 
 ## AI use declaration
 Add your Declaration of AI-Generated Material here and submit it with the assignment.

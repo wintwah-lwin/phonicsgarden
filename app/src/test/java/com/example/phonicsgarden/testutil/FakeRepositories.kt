@@ -10,6 +10,8 @@ import com.example.phonicsgarden.data.repository.SettingsRepository
 import com.example.phonicsgarden.data.repository.WordPackSyncResult
 import com.example.phonicsgarden.data.repository.WordRepository
 import com.example.phonicsgarden.engine.DayActivity
+import com.example.phonicsgarden.util.SoundEffect
+import com.example.phonicsgarden.util.SoundEffects
 import com.example.phonicsgarden.util.Speaker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,6 +103,14 @@ class FakeSettingsRepository(
 
     override suspend fun setReducedMotion(enabled: Boolean) {
         state.update { it.copy(reducedMotion = enabled) }
+    }
+}
+
+class FakeSoundEffects : SoundEffects {
+    val played = mutableListOf<SoundEffect>()
+
+    override fun play(effect: SoundEffect) {
+        played.add(effect)
     }
 }
 

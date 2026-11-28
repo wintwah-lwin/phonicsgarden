@@ -3,6 +3,7 @@ package com.example.phonicsgarden.ui.games.bubble
 import com.example.phonicsgarden.engine.ChallengeGenerator
 import com.example.phonicsgarden.testutil.FakeProgressRepository
 import com.example.phonicsgarden.testutil.FakeSettingsRepository
+import com.example.phonicsgarden.testutil.FakeSoundEffects
 import com.example.phonicsgarden.testutil.FakeTtsSpeaker
 import com.example.phonicsgarden.testutil.FakeWordRepository
 import com.example.phonicsgarden.testutil.MainDispatcherRule
@@ -30,7 +31,7 @@ class BubblePopViewModelTest {
         val generator = ChallengeGenerator()
         val speaker = FakeTtsSpeaker()
 
-        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker)
+        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker, FakeSoundEffects())
         advanceUntilIdle()
 
         val state = viewModel.state.value
@@ -48,7 +49,7 @@ class BubblePopViewModelTest {
         val generator = ChallengeGenerator()
         val speaker = FakeTtsSpeaker()
 
-        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker)
+        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker, FakeSoundEffects())
         advanceUntilIdle()
 
         val challenge = viewModel.state.value.challenge!!
@@ -69,7 +70,7 @@ class BubblePopViewModelTest {
         val generator = ChallengeGenerator()
         val speaker = FakeTtsSpeaker()
 
-        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker)
+        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker, FakeSoundEffects())
         advanceUntilIdle()
 
         val challenge = viewModel.state.value.challenge!!
@@ -89,7 +90,7 @@ class BubblePopViewModelTest {
         val generator = ChallengeGenerator()
         val speaker = FakeTtsSpeaker()
 
-        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker)
+        val viewModel = BubblePopViewModel(wordRepo, progressRepo, settingsRepo, generator, speaker, FakeSoundEffects())
         advanceUntilIdle()
 
         val initialSpokenCount = speaker.spokenTexts.size
